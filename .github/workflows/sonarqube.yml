@@ -45,7 +45,7 @@ jobs:
         run: |
           sonar-scanner \
             -Dsonar.projectKey=car_link_express \
-            -Dsonar.projectName=CarLink-Express \
+            -Dsonar.projectName=car-link-express \
             -Dsonar.sources=src \
             -Dsonar.tests=tests \
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
