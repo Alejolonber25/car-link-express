@@ -34,14 +34,19 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-        
+          
       - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@master
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        with:
-          args: >
-            -Dsonar.projectKey=car-link-express
-            -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info
-            -Dsonar.tests.failed=${{ steps.run-tests.outputs.tests_failed != '0' }}
+          SONAR_TOKEN: ${{ secrets.TOKEN_SONAR }}
+          SONAR_HOST_URL: ${{ secrets.URL_SONAR }}
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=car_link_express \
+            -Dsonar.projectName=CarLink-Express \
+            -Dsonar.sources=src \
+            -Dsonar.tests=tests \
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+            -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info \
+            -Dsonar.testExecutionReportPaths=coverage/test-report.xml \
+            -Dsonar.token=$SONAR_TOKEN \
+            -Dsonar.host.url=$SONAR_HOST_URL
