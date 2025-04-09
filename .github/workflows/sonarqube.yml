@@ -1,0 +1,52 @@
+name: SonarQube Analysis
+
+on:
+  push:
+    branches: [ main]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  sonar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run tests with coverage
+        id: run-tests
+        continue-on-error: true
+        run: |
+          npm test -- --coverage
+          echo "::set-output name=tests_failed::$?"
+        
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          
+      - name: SonarQube Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.TOKEN_SONAR }}
+          SONAR_HOST_URL: ${{ secrets.URL_SONAR }}
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=car_link_express \
+            -Dsonar.projectName=CarLink-Express \
+            -Dsonar.sources=src \
+            -Dsonar.tests=tests \
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+            -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info \
+            -Dsonar.testExecutionReportPaths=coverage/test-report.xml \
+            -Dsonar.token=$SONAR_TOKEN \
+            -Dsonar.host.url=$SONAR_HOST_URL
