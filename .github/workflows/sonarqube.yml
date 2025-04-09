@@ -2,39 +2,42 @@ name: SonarQube Analysis
 
 on:
   push:
-    branches: [ main]
-  pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  sonar:
+  sonar-analysis:
+    name: SonarQube Scan
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          fetch-depth: 0
-          
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-          
+          node-version: '18'
+
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Run tests with coverage
-        id: run-tests
-        continue-on-error: true
-        run: |
-          npm test -- --coverage
-          echo "::set-output name=tests_failed::$?"
-        
-      - name: Setup Java JDK
+        run: npm run test:coverage
+
+      - name: Set up Java (for SonarScanner)
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
-          
+
+      - name: Install SonarScanner
+        run: |
+          wget -q https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+          unzip -q sonar-scanner-cli-5.0.1.3006-linux.zip
+          echo "SONAR_SCANNER_HOME=$PWD/sonar-scanner-5.0.1.3006-linux" >> $GITHUB_ENV
+          echo "$PWD/sonar-scanner-5.0.1.3006-linux/bin" >> $GITHUB_PATH
+
       - name: SonarQube Scan
         env:
           SONAR_TOKEN: ${{ secrets.TOKEN_SONAR }}
