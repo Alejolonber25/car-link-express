@@ -51,5 +51,5 @@ jobs:
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
             -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info \
             -Dsonar.testExecutionReportPaths=coverage/test-report.xml \
-            -Dsonar.token=$SONAR_TOKEN \
-            -Dsonar.host.url=$SONAR_HOST_URL
+            -Dsonar.token=${{ secrets.TOKEN_SONAR }} \
+            -Dsonar.host.url=${{ secrets.URL_SONAR }}
