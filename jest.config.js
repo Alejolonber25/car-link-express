@@ -12,6 +12,7 @@ module.exports = {
   },
   collectCoverage: true,
   coverageDirectory: 'coverage',
+  coverageReporters: ["lcov"],
   collectCoverageFrom: [
     'src/domain/**/*.{ts,tsx}', // Incluir pruebas de domain
     'src/infrastructure/**/*.{ts,tsx}', // Incluir pruebas de infrastructure
